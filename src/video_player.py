@@ -316,7 +316,52 @@ class VideoPlayer:
         Args:
             video_tag: The video tag to be used in search.
         """
-        print("search_videos_tag needs implementation")
+        videos = self._video_library.get_all_videos()
+        videos_sorted = []
+        for video in videos:
+            line = []
+            line.append(str(video.title))
+            line.append(str(video.video_id))
+            
+            tags = []
+            for i in range(len(video.tags)):
+                tags.append(video.tags[i])
+            line.append(tags)
+            
+            videos_sorted.append(line)
+
+        videos_sorted = sorted(videos_sorted)
+        video_results = []
+
+        for video in videos_sorted:
+            for tag in video[2]:
+                if tag.lower().find(video_tag.lower()) != -1:
+                    video_results.append(video)
+
+        if len(video_results) != 0:
+            print("Here are the results for " + video_tag + ":")
+
+            for video in video_results:
+                print(str(video_results.index(video) + 1) + ")" , end = " ")
+                print(video[0] + " ("+ video[1] + ") [", end = "")
+                for i in range(len(video[2])):
+                    print(video[2][i], end = "")
+                    if i != len(video[2]) - 1:
+                        print(" ", end = "")
+                print("]")
+
+            print("Would you like to play any of the above? If yes, specify the number of the video.")
+            print("If your answer is not a valid number, we will assume it's a no.")
+            command = input()
+
+            try:
+                index = int(command[0]) - 1
+                video_title = video_results[index][0]
+                print("Playing video: " + video_title)
+            except:
+                return
+        else:
+            print("No search results for " + video_tag)
 
     def flag_video(self, video_id, flag_reason=""):
         """Mark a video as flagged.
